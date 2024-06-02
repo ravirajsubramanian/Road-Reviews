@@ -2,110 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import './App.css';
-
-function SearchBar({ source, destination, handleSearch, handleInputChange }) {
-  return <div className="content">
-          <h1>Search for Roads</h1>
-            <form onSubmit={handleSearch}>
-              <div className="search-inputs">
-                <div>
-                  <label htmlFor="source">Source:</label>
-                  <input
-                    type="text"
-                    id="source"
-                    name="source"
-                    value={source}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="destination">Destination:</label>
-                  <input
-                    type="text"
-                    id="destination"
-                    name="destination"
-                    value={destination}
-                    onChange={handleInputChange}
-                  />
-                  </div>
-                </div>
-              <button type="submit">Search</button>
-            </form>
-          </div>;
-}
-
-function Filters({ numLanes, minRating, signals, potholes, numLanesOptions, ratingsOptions, handleInputChange }) {
-  return <div className="sidebar">
-          <div className="filters">
-            <h2>Filters</h2>
-            <div>
-              <label htmlFor="numLanes">Number of Lanes:</label>
-              <select id="numLanes" name="numLanes" value={numLanes} onChange={handleInputChange}>
-                {numLanesOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-            <label htmlFor="minRating">Minimum Rating:</label>
-              <select id="minRating" name="minRating" value={minRating} onChange={handleInputChange}>
-                {ratingsOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  name="signals"
-                  checked={signals}
-                  onChange={handleInputChange}
-                />
-                Signals
-              </label>
-            </div>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  name="potholes"
-                  checked={potholes}
-                  onChange={handleInputChange}
-                />
-                Potholes
-              </label>
-            </div>
-          </div>
-        </div>;
-}
-
-function Results({ filteredResults }) {
-  return <div className="results">
-        {filteredResults.length > 0 ? (
-        <div>
-          <h2>Search Results:</h2>
-          <ul>
-            {filteredResults.map(result => (
-              <li key={result.id}>
-                <div>Name: {result.name}</div>
-                <div>Ratings: {result.ratings}</div>
-                <div>Number of Lanes: {result.lanes}</div>
-                <div>Signals: {result.signals ? 'Yes' : 'No'}</div>
-                <div>Potholes: {result.potholes ? 'Yes' : 'No'}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        ) : (
-          <p>No results found.</p>
-        )}
-        </div>
-}
+import SearchBar from './components/SearchBar';
+import Filters from './components/Filters';
+import Results from './components/Results';
+import RoadReviewDialog from './components/RoadReviewDialog';
+import Login from './components/Login';
 
 function App(){
   const [source, setSource] = useState('');
@@ -118,12 +19,19 @@ function App(){
   const [roads, setRoads] = useState([]);
   // const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     filterResults();
   }, [source, destination, numLanes, minRating, signals, potholes]);
   const numLanesOptions = [2, 4, 6];
   const ratingsOptions = [1, 2, 3, 4, 5];
   
+  const handleLogin = (username) => {
+    setUser(username);
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     // Simulate fetching search results (replace with actual API call)
@@ -143,7 +51,6 @@ function App(){
   }
 
   const filterResults = () => {
-    console.log(minRating);
     let filtered = roads.filter(result =>
       result.connecting.some(connect => connect.toLowerCase().includes(source.toLowerCase())) &&
       result.connecting.some(connect => connect.toLowerCase().includes(destination.toLowerCase())) &&
@@ -176,12 +83,68 @@ function App(){
     }
   };
 
-    return (
-      <div className="container">
-        <Filters numLanes={numLanes} minRating={minRating} signals={signals} potholes={potholes} numLanesOptions={numLanesOptions} ratingsOptions={ratingsOptions} handleInputChange={handleInputChange} />
-        <SearchBar source={source} destination={destination} handleSearch={handleSearch} handleInputChange={handleInputChange} />
-        <Results filteredResults={filteredResults} />
+  const handleRoadReviewSubmit = (rating) => {
+    console.log('rating', rating);
+    // Handle road review submission, update state with the rating
+    setIsDialogOpen(false); // Close the dialog box after submitting
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false); // Close the dialog box
+  };
+
+  const handleReviewRoad = () => {
+    setIsDialogOpen(true); // Open the dialog box when "Review a road" button is clicked
+  };
+
+  return (
+    <div className={`container ${isDialogOpen ? 'modal-open' : ''}`}>
+      <div className="content-wrapper">
+        {user ? (
+        <div>
+          <h2>Welcome, {user}!</h2>
+          <button onClick={() => setUser(null)}>Logout</button>
+          <div className="filters-wrapper">
+            <Filters
+              numLanes={numLanes}
+              minRating={minRating}
+              signals={signals}
+              potholes={potholes}
+              numLanesOptions={numLanesOptions}
+              ratingsOptions={ratingsOptions}
+              handleInputChange={handleInputChange}
+              className="filters"
+            />
+          </div>
+          <div className="search-results-wrapper">
+            <div className="search-bar">
+              <SearchBar
+                source={source}
+                destination={destination}
+                handleSearch={handleSearch}
+                handleInputChange={handleInputChange}
+                className="search-input"
+              />
+              <button onClick={handleReviewRoad} className="search-button">Review a road</button>
+            </div>
+            <Results filteredResults={filteredResults} className="results" />
+          </div>
+        </div>
+      ) : (
+        <Login onLogin={handleLogin} />
+      )}
       </div>
+      {isDialogOpen && (
+        <div className="modal-background">
+          <RoadReviewDialog
+            isOpen={isDialogOpen}
+            onClose={handleDialogClose}
+            onSubmit={handleRoadReviewSubmit}
+            className="road-review-dialog"
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
