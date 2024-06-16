@@ -1,0 +1,4 @@
+id,name,connecting,rating,lanes,signals,potholes
+1,'Chennai-Bengaluru Highway',['Chennai','Vellore','Krishnagiri','Hosur','Bengaluru'],4.5,4,true,false
+2,'Chennai-Theni Highway',['Chennai','Chengalpattu','Tindivanam','Perambalur','Trichy'],3.8,6,false,true
+3,'East Coast Road (ECR)',['Chennai','Mahabalipuram','Puducherry'],4.2,2,true,true

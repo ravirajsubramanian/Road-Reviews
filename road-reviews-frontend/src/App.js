@@ -7,6 +7,7 @@ import Filters from './components/Filters';
 import Results from './components/Results';
 import RoadReviewDialog from './components/RoadReviewDialog';
 import Login from './components/Login';
+import getRoads from './controller';
 
 function App(){
   const [source, setSource] = useState('');
@@ -32,22 +33,23 @@ function App(){
     setUser(username);
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    // Simulate fetching search results (replace with actual API call)
-    const dummyRoads = [
-      { id: 1, name: 'Chennai-Trichy Highway', connecting: ['Chennai','Villupuram','Trichy'], ratings: 4.5, lanes: 4, signals: true, potholes: false },
-      { id: 2, name: 'Chennai-Tanjore Highway', connecting: ['Chennai','Villupuram', 'Panruti','Kumbakonam','Tanjore'], ratings: 3.8, lanes: 6, signals: false, potholes: true },
-      { id: 3, name: 'ECR', connecting: ['Chennai','Mayiladuthurai','Velankanni'], ratings: 4.2, lanes: 2, signals: true, potholes: true },
-    ];
-    // Filter search results based on attributes
-    console.log(source, destination, numLanes, minRating, signals, potholes);
-    // setRoads(dummyRoads);
-    let searchResult = dummyRoads.filter(result =>
-      result.connecting.some(connect => connect.toLowerCase().includes(source.toLowerCase())) &&
-      result.connecting.some(connect => connect.toLowerCase().includes(destination.toLowerCase())));
-    setRoads(searchResult);
-    setFilteredResults(searchResult);
+    try {
+      const response = await getRoads();
+      // Filter search results based on attributes
+      console.log(source, destination, numLanes, minRating, signals, potholes);
+      // setRoads(dummyRoads);
+      const allRoads = response.data.roads;
+      let searchResult = allRoads.filter(result =>
+        result.connecting.some(connect => connect.toLowerCase().includes(source.toLowerCase())) &&
+        result.connecting.some(connect => connect.toLowerCase().includes(destination.toLowerCase())));
+      setRoads(searchResult);
+      setFilteredResults(searchResult);
+    } catch (e) {
+      console.error('Error: Unable to get the roads list');
+      console.error(e);
+    }
   }
 
   const filterResults = () => {
