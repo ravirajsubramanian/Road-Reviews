@@ -1,0 +1,5 @@
+id,road_id,rating,review
+1,1,4,'good'
+2,1,5,'great'
+3,2,3.8,'average'
+4,3,4.2,'Awesome'
