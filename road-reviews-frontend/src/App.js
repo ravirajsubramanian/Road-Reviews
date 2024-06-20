@@ -1,6 +1,5 @@
-// App.js
-
 import React, { useState, useEffect } from 'react';
+
 import './App.css';
 import SearchBar from './components/SearchBar';
 import Filters from './components/Filters';
@@ -12,22 +11,22 @@ import getRoads from './controller';
 function App(){
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
-  const [numLanes, setNumLanes] = useState('');
-  // const [numLanesOptions, setNumLanesOptions] = useState([2,4,6]);
+  const [minNumLanes, setMinNumLanes] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [signals, setSignals] = useState(false);
   const [potholes, setPotholes] = useState(false);
   const [roads, setRoads] = useState([]);
-  // const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     filterResults();
-  }, [source, destination, numLanes, minRating, signals, potholes]);
-  const numLanesOptions = [2, 4, 6];
+  }, [source, destination, minNumLanes, minRating, signals, potholes, roads]);
+
+  const minNumLanesOptions = [2, 4, 6];
   const ratingsOptions = [1, 2, 3, 4, 5];
+  const placesOptions = ["Chennai", "Vellore", "Krishnagiri", "Hosur", "Bengaluru", "Chengalpattu", "Tindivanam", "Perambalur", "Trichy", "Mahabalipuram", "Puducherry"];
   
   const handleLogin = (username) => {
     setUser(username);
@@ -38,26 +37,23 @@ function App(){
     try {
       const response = await getRoads();
       // Filter search results based on attributes
-      console.log(source, destination, numLanes, minRating, signals, potholes);
-      // setRoads(dummyRoads);
+      console.log(source, destination, minNumLanes, minRating, signals, potholes);
       const allRoads = response.data.roads;
       let searchResult = allRoads.filter(result =>
         result.connecting.some(connect => connect.toLowerCase().includes(source.toLowerCase())) &&
         result.connecting.some(connect => connect.toLowerCase().includes(destination.toLowerCase())));
       setRoads(searchResult);
-      setFilteredResults(searchResult);
+      filterResults(searchResult);
     } catch (e) {
       console.error('Error: Unable to get the roads list');
       console.error(e);
     }
   }
 
-  const filterResults = () => {
-    let filtered = roads.filter(result =>
-      result.connecting.some(connect => connect.toLowerCase().includes(source.toLowerCase())) &&
-      result.connecting.some(connect => connect.toLowerCase().includes(destination.toLowerCase())) &&
-      (numLanes ? result.lanes === parseInt(numLanes) : true) &&
-      result.ratings >= minRating &&
+  const filterResults = (roadsToFilter = roads) => {
+    let filtered = roadsToFilter.filter(result =>
+      result.lanes >= minNumLanes &&
+      result.rating >= minRating &&
       (!signals || result.signals) &&
       (!potholes || result.potholes)
     );
@@ -77,8 +73,8 @@ function App(){
         setSource(value);
       } else if (name === 'destination') {
         setDestination(value);
-      } else if (name === 'numLanes') {
-        setNumLanes(value);
+      } else if (name === 'minNumLanes') {
+        setMinNumLanes(value);
       } else if (name === 'minRating') {
         setMinRating(parseFloat(value));
       }
@@ -95,47 +91,51 @@ function App(){
     setIsDialogOpen(false); // Close the dialog box
   };
 
-  const handleReviewRoad = () => {
-    setIsDialogOpen(true); // Open the dialog box when "Review a road" button is clicked
-  };
+  // const handleReviewRoad = () => {
+  //   setIsDialogOpen(true); // Open the dialog box when "Review a road" button is clicked
+  // };
 
   return (
     <div className={`container ${isDialogOpen ? 'modal-open' : ''}`}>
-      <div className="content-wrapper">
         {user ? (
-        <div>
-          <h2>Welcome, {user}!</h2>
-          <button onClick={() => setUser(null)}>Logout</button>
-          <div className="filters-wrapper">
-            <Filters
-              numLanes={numLanes}
-              minRating={minRating}
-              signals={signals}
-              potholes={potholes}
-              numLanesOptions={numLanesOptions}
-              ratingsOptions={ratingsOptions}
-              handleInputChange={handleInputChange}
-              className="filters"
-            />
-          </div>
-          <div className="search-results-wrapper">
+          <div className="content-wrapper">
+            <header className="header">
             <div className="search-bar">
               <SearchBar
                 source={source}
                 destination={destination}
                 handleSearch={handleSearch}
                 handleInputChange={handleInputChange}
+                placesOptions={placesOptions}
                 className="search-input"
-              />
-              <button onClick={handleReviewRoad} className="search-button">Review a road</button>
+               />
             </div>
-            <Results filteredResults={filteredResults} className="results" />
+            <span>
+              {/* <button onClick={handleReviewRoad} className="review-button">Review a road</button> */}
+              <button onClick={() => setUser(null)} className="logout-button">Logout</button>
+            </span>
+            </header>
+            <div className="filters-wrapper">
+              <Filters
+                minNumLanes={minNumLanes}
+                minRating={minRating}
+                signals={signals}
+                potholes={potholes}
+                minNumLanesOptions={minNumLanesOptions}
+                ratingsOptions={ratingsOptions}
+                handleInputChange={handleInputChange}
+                className="filters"
+              />
+            </div>
+          <div className="search-results-wrapper">
+              <div className="card">
+                <Results filteredResults={filteredResults} className="results" />
+              </div>
+            </div>
           </div>
-        </div>
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-      </div>
+        ) : (
+            <Login onLogin={handleLogin} />
+        )}
       {isDialogOpen && (
         <div className="modal-background">
           <RoadReviewDialog

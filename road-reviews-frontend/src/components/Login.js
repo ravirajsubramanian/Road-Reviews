@@ -16,23 +16,23 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
       <input
         type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        className="login-input"
       />
-      <br />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="login-input"
       />
-      <br />
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogin} className="login-button">Login</button>
     </div>
   );
 };
