@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Results({ filteredResults }) {
+function Results({ filteredResults, handleReviewRoad }) {
   return (
     <div className="results">
       {filteredResults.length > 0 ? (
@@ -9,11 +9,12 @@ function Results({ filteredResults }) {
           <ul className="results-list">
             {filteredResults.map(result => (
               <li key={result.id} className="result-item">
-                <div className="result-name">Name: {result.name}</div>
-                <div className="result-ratings">Ratings: {result.ratings}</div>
+                <div className="result-name">{result.name}</div>
+                <div className="result-ratings">Ratings: {result.rating}/5</div>
                 <div className="result-lanes">Number of Lanes: {result.lanes}</div>
                 <div className="result-signals">Signals: {result.signals ? 'Yes' : 'No'}</div>
                 <div className="result-potholes">Potholes: {result.potholes ? 'Yes' : 'No'}</div>
+                <button className="button button-primary review-button" onClick={() => handleReviewRoad(result.id)}>Add your review</button>
               </li>
             ))}
           </ul>

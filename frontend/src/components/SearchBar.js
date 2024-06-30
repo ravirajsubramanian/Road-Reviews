@@ -6,22 +6,22 @@ function SearchBar({ source, destination, handleSearch, handleInputChange, place
       <div>
         <label htmlFor="source">Source:</label>
         <select 
-          className="search-input"
+          className="input"
           id="source"
           name="source"
           value={source}
           onChange={handleInputChange}>
-            {placesOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          {placesOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="destination">Destination:</label>
         <select 
-          className="search-input"
+          className="input"
           id="destination"
           name="destination"
           value={destination}
@@ -31,9 +31,9 @@ function SearchBar({ source, destination, handleSearch, handleInputChange, place
               {option}
             </option>
           ))}
-          </select>
+        </select>
       </div>
-      <button onClick={handleSearch} className="search-button">Search</button>
+      <button onClick={handleSearch} className="button button-primary">Search</button>
     </div>
   );
 }
