@@ -7,7 +7,6 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // You can perform authentication here, for simplicity, let's just check if both fields are filled
     if (username && password) {
       onLogin(username);
     } else {
@@ -24,6 +23,7 @@ const Login = ({ onLogin }) => {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="login-input"
+        required
       />
       <input
         type="password"
@@ -31,6 +31,7 @@ const Login = ({ onLogin }) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         className="login-input"
+        required
       />
       <button onClick={handleLogin} className="login-button">Login</button>
     </div>
@@ -38,3 +39,4 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+
