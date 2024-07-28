@@ -1,5 +1,5 @@
 import Axios from 'axios';
 
 export default Axios.create({
-  baseURL: "http://localhost:3005",
+  baseURL: process.env.REACT_APP_BASE_URL,
 });
