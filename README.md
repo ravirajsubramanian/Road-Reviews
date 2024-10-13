@@ -34,7 +34,7 @@ The Road Reviews is an open-source project designed to provide a platform where 
 3. Set up the database:
    - Install a PostgreSQL database by following the instructions provided in the [official documentation](https://www.postgresql.org/download/).
    - Create a `.env` file in the backend folder and add your database credentials like so:
-     ```
+     ```env
      DATABASE_URL=postgres://YOUR-USERNAME:YOUR-PASSWORD@localhost:5432/roads
      ```
      Replace the placeholders with your actual username and password.
@@ -103,7 +103,7 @@ The Road Reviews is an open-source project designed to provide a platform where 
      \dt
      ```
      You should see the following tables:
-     ```
+     ```text
      roads  | reviews  | users
      ```
    - Insert the initial data into the database:  
@@ -124,7 +124,8 @@ The Road Reviews is an open-source project designed to provide a platform where 
       (2, 1, 5, 'great'),
       (3, 2, 3.8, 'average'),
       (4, 3, 4.2, 'Awesome');
-      (5, 4, 4.5, 'Smooth'); 
+      (5, 4, 4.5, 'Smooth');
+      ```
    - Verify the data was inserted successfully:
      ```sql
      SELECT * FROM users;
@@ -132,7 +133,7 @@ The Road Reviews is an open-source project designed to provide a platform where 
      SELECT * FROM reviews;
      ```
      You should see the output with the inserted data.
-     ```
+
    - Exit the postgres shell:  
      ```sql
      \q
@@ -168,12 +169,12 @@ The Road Reviews is an open-source project designed to provide a platform where 
 ## How to Deploy
 
 ### Backend (Node.js - Express.js)
-1. Ensure all environment variables are set up properly in the `.env` file.
-2. Build the project:  
+1. Build the project:  
    ```bash
    npm run build
    ```
-3. Deploy the backend to your preferred Node.js hosting service (e.g., Heroku, AWS, etc.).
+2. Either self-host the backend or deploy the backend to your preferred Node.js hosting service (e.g., Heroku, AWS, etc.).
+3. Ensure all environment variables are set up properly in the `.env` file and in the hosting service if applicable.
 4. Set up the PostgreSQL database in your production environment.
 
 ### Frontend (React)
@@ -181,8 +182,9 @@ The Road Reviews is an open-source project designed to provide a platform where 
    ```bash
    npm run build
    ```
-2. Deploy the frontend build files (`build` folder) to your preferred hosting platform (e.g., Vercel, Netlify, or static hosting on AWS S3).
-3. Ensure the frontend can communicate with the backend API by setting the correct API base URL.
+2. Either self-host the frontend or deploy the frontend build files (`build` folder) to your preferred hosting platform (e.g., Vercel, Netlify, or static hosting on AWS S3).
+3. Ensure all the environment variables are set up properly in the `.env` file and in the hosting service if applicable.
+4. Change the API base URL in the frontend to point to your backend server whether it is self-hosted or hosted on a service.
 
 ## How to Contribute
 
